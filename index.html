@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>AlgoBot Login</title>
+<!--
+  One-tap Shoonya login (D19, built 10 Nov 2026).
+
+  Shoonya's OAuth flow ends by sending the browser to this page with
+  ?code=<one-time code>. This page does ONE thing: it turns that into
+  https://t.me/algobot_login_paikobgyn_bot?start=<code>, which opens the
+  login bot in Telegram; tapping START there sends "/start <code>" to the
+  bot, which exchanges the code exactly as if it had been pasted.
+
+  It loads nothing, stores nothing and sends the code nowhere but Telegram.
+  A Telegram start parameter carries at most 64 of A-Z a-z 0-9 _ - ; the
+  code was measured on 9 and 10 Nov 2026 at 36 such characters. Anything
+  else is refused here and the page says to paste the address instead.
+  The code works once and expires quickly, so it is never worth keeping.
+-->
+<style>
+  :root { --bg: #ffffff; --fg: #1a1a1a; --muted: #555; --btn: #2a7de1; --btnfg: #fff; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #17191c; --fg: #ececec; --muted: #a8a8a8; --btn: #3b8cf0; }
+  }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+         font: 17px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 32rem; margin: 0 auto; padding: 2.5rem 16px; }
+  h1 { font-size: 1.4rem; margin: 0 0 1rem; }
+  a.btn { display: block; text-align: center; background: var(--btn);
+          color: var(--btnfg); text-decoration: none; font-weight: 600;
+          padding: 1rem; border-radius: 10px; margin: 1.5rem 0; }
+  p.small { color: var(--muted); font-size: 0.95rem; }
+  #bad { display: none; }
+</style>
+</head>
+<body>
+<main>
+  <h1>AlgoBot Login</h1>
+  <div id="good">
+    <p>Shoonya has logged you in. One more tap:</p>
+    <a class="btn" id="send" href="#">Send to AlgoBot Login</a>
+    <p class="small">Telegram opens the AlgoBot Login chat. Tap
+      <b>START</b> at the bottom and the bot finishes the login.
+      Do it now: the code works once and expires quickly.</p>
+  </div>
+  <div id="bad">
+    <p>This page did not receive a login code it can pass on.</p>
+    <p class="small">Copy the full address from the address bar and paste
+      it into the AlgoBot Login chat instead, or send /login there to start
+      again.</p>
+  </div>
+</main>
+<script>
+  (function () {
+    var BOT = "algobot_login_paikobgyn_bot";
+    var code = new URLSearchParams(window.location.search).get("code") || "";
+    if (!/^[A-Za-z0-9_-]{1,64}$/.test(code)) {
+      document.getElementById("good").style.display = "none";
+      document.getElementById("bad").style.display = "block";
+      return;
+    }
+    var link = "https://t.me/" + BOT + "?start=" + code;
+    document.getElementById("send").href = link;
+    // Try to open Telegram straight away; the button stays for browsers
+    // that block a navigation nobody tapped.
+    window.location.replace(link);
+  })();
+</script>
+</body>
+</html>
